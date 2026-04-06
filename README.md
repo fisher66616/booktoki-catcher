@@ -1,103 +1,201 @@
-# 1. 뉴토끼 마나토끼 북토끼 다운로드 스크립트
-- 프로그램 설치 불필요
-- 정보수집 없음
-## 사용법
-1. Tampermonkey 확장 프로그램 설치
-2. [tokiDownloader](https://sleazyfork.org/ko/scripts/531932-tokidownloader) 접속해 스크립트 설치
-3. 뉴토끼, 마나토끼, 북토끼 회차 목록 페이지 접속
-4. 원하는 기능을 클릭해 다운로드
+# Booktoki Catcher
 
-https://github.com/user-attachments/assets/fe974989-5ffb-4831-b2dc-7ea576712f62
-## 폴더(디렉토리) 구조
-뉴토끼, 마나토끼
-```
-뉴토끼 시작연재이름 ~ 마지막연재이름/
-|
-├─ 0001 어떤만화-1화/
-|   ├─ 어떤만화-1화 image0000.jpg
-|  ...
-|   └─ 어떤만화-1화 image0015.jpg
-├─ 0002 어떤만화-2화/
-|   ├─ 어떤만화-2화 image0000.jpg
-|  ...
-|   └─ 어떤만화-2화 image0030.jpg
-...
-└─ 0123 어떤만화-123화/
-    ├─ 어떤만화-123화 image0000.jpg
-   ...
-    └─ 어떤만화-123화 image0030.jpg
-```
-북토끼
-```
-북토끼 시작연재이름 ~ 마지막연재이름/
-|
-├─ 0001 어떤소설-1화.txt
-├─ 0002 어떤소설-2화.txt
-├─ 0003 어떤소설-3화.txt
-...
-└─ 1234 어떤소설-1234화.txt
+Booktoki Catcher 现在是一个面向 macOS 的桌面下载器，目标是让普通用户也能通过图形界面下载 BookToki / NewToki / ManaToki 作品，同时尽量保留原仓库的 Node.js 命令行能力与站点适配逻辑。
+
+当前实现重点：
+
+- 保留原始下载核心思路，不重写站点抓取链路
+- 新增 Electron 桌面壳，支持双击启动 macOS `.app`
+- renderer 侧固定启用安全边界
+  - `contextIsolation: true`
+  - `nodeIntegration: false`
+  - 只通过 `preload + contextBridge` 暴露白名单 API
+- CLI 继续保留 `-url / -start / -last` 参数
+- GUI 默认把结果保存到“用户选择目录/作品名/…”
+- CLI 默认继续保留旧版站点根目录输出结构
+
+## 功能概览
+
+桌面版界面包含：
+
+- 作品链接输入框
+- 开始章节输入框
+- 结束章节输入框
+- 保存目录选择
+- 开始下载按钮
+- 停止 / 取消按钮
+- 日志输出区域
+- 当前状态提示
+
+支持站点：
+
+- BookToki
+- NewToki
+- ManaToki
+
+## 项目结构
+
+```text
+.
+├─ assets/
+│  └─ booktoki-catcher-mark.svg
+├─ electron/
+│  ├─ main.js
+│  └─ preload.js
+├─ scripts/
+│  ├─ build-mac.sh
+│  └─ dev.sh
+├─ src/
+│  ├─ core/
+│  │  ├─ downloader.js
+│  │  ├─ errors.js
+│  │  ├─ output.js
+│  │  └─ sites.js
+│  └─ renderer/
+│     ├─ index.html
+│     ├─ renderer.js
+│     └─ styles.css
+├─ down.js
+├─ tokiDownloader.js
+├─ package.json
+└─ package-lock.json
 ```
 
-# 2. 뉴토끼 마나토끼 북토끼 다운로더
-## 준비물 
-Nodejs
-## 설치 방법
+职责说明：
+
+- `src/core/`: 可复用的下载核心，CLI 和 Electron 共用
+- `electron/`: Electron 主进程与 preload 安全桥
+- `src/renderer/`: 桌面应用界面
+- `scripts/`: 一键开发启动与一键打包脚本
+- `down.js`: 兼容原有 CLI 的薄入口
+- `tokiDownloader.js`: 保留的 legacy userscript
+
+## 下载结果结构
+
+### GUI 默认输出
+
+桌面版默认输出到用户选择目录下的作品名文件夹。
+
+BookToki：
+
+```text
+选择的保存目录/
+└─ 作品名/
+   ├─ 0001 章节名.txt
+   ├─ 0002 章节名.txt
+   └─ ...
+```
+
+NewToki / ManaToki：
+
+```text
+选择的保存目录/
+└─ 作品名/
+   ├─ 0001 章节名/
+   │  ├─ 0001 章节名 image0000.jpg
+   │  └─ ...
+   └─ ...
+```
+
+### CLI 兼容输出
+
+CLI 默认继续使用旧结构：
+
+```text
+북토끼/作品名/0001 章节名.txt
+뉴토끼/作品名/0001 章节名/0001 章节名 image0000.jpg
+마나토끼/作品名/0001 章节名/0001 章节名 image0000.jpg
+```
+
+## 开发环境
+
+建议环境：
+
+- macOS
+- Node.js 24+
+- npm 11+
+
+安装依赖：
+
 ```bash
-git clone https://github.com/crossSiteKikyo/tokiDownloader.git
-cd tokiDownloader
 npm install
 ```
-https://github.com/user-attachments/assets/b3879c59-3381-407b-a3a8-ad8bf8d84cbb
-## 명령어
+
+## 本地运行
+
+### 运行桌面版开发环境
+
 ```bash
-node down -url "URL" [-start STARTINDEX] [-last LASTINDEX]
+npm run dev
 ```
-- -url은 필수 입력입니다. 반드시 큰따옴표 안에 넣어주세요.
-- -start는 옵션입니다. 받고싶은 회차 시작 번호를 입력하세요. 생략하면 처음부터 받습니다.
-- -last는 옵션입니다. 받고싶은 마지막 회차 번호를 입력하세요. 생략하면 마지막까지 받습니다.
 
-https://github.com/user-attachments/assets/86c17334-c96c-48d2-bfdb-31072766030c
+或：
 
-## 폴더(디렉토리) 구조
+```bash
+./scripts/dev.sh
 ```
-뉴토끼/
-├─ 웹툰이름1/
-│   ├─ 0001 어떤웹툰-1화/
-│   │   ├─ 0001 어떤웹툰-1화 image0000.jpg
-│   │   ├─ 0001 어떤웹툰-1화 image0001.jpg
-│   │   ...
-│   │   └─ 0001 어떤웹툰-1화 image0024.jpg
-│   └─ 0002 어떤웹툰-2화/
-│       ├─ 0002 어떤웹툰-2화 image0000.jpg
-│       ├─ 0002 어떤웹툰-2화 image0001.jpg
-│       ...
-│       └─ 0002 어떤웹툰-2화 image0020.jpg
-└─ 웹툰이름2/
 
-마나토끼/
-├─ 만화이름1/
-│   ├─ 0001 어떤만화-1화/
-│   │   ├─ 0001 어떤만화-1화 image0000.jpg
-│   │   ├─ 0001 어떤만화-1화 image0001.jpg
-│   │   ...
-│   │   └─ 0001 어떤만화-1화 image0015.jpg
-│   └─ 0002 어떤만화-2화/
-│       ├─ 0002 어떤만화-2화 image0000.jpg
-│       ├─ 0002 어떤만화-2화 image0001.jpg
-│       ...
-│       └─ 0002 어떤만화-2화 image0032.jpg
-└─ 만화이름2/
+### 运行 CLI
 
-북토끼/
-├─ 소설이름1/
-│   ├─ 0001 어떤소설-1화.txt
-│   ├─ 0001 어떤소설-2화.txt
-│   ...
-│   └─ 0002 어떤소설-20화.txt
-└─ 소설이름2/
+```bash
+node down.js -url "https://booktoki469.com/novel/6981" -start 1 -last 10
 ```
-## 질문
-### 오류 또는 개선사항 문의 
-[issue](https://github.com/crossSiteKikyo/tokiDownloader/issues) 에 제보해주세요. 스크립트방식인지 다운로더인지, 어떤 링크를 시도한건지 어떤 오류가 난건지 상세히 적어주셔야 해결 가능합니다.
-### cloudflare captcha 자동으로 체크해주실 수 없나요?
-전에는 라이브러리에 오류가 있었는데 지금은 자동 체크 합니다.
+
+参数说明：
+
+- `-url`: 必填，作品目录页链接
+- `-start`: 可选，开始章节编号
+- `-last`: 可选，结束章节编号
+
+## 打包 macOS App
+
+执行：
+
+```bash
+npm run build:mac
+```
+
+或：
+
+```bash
+./scripts/build-mac.sh
+```
+
+默认产物位置：
+
+```text
+dist/mac-arm64/Booktoki Catcher.app
+```
+
+当前打包策略：
+
+- 首版优先跑通，`asar: false`
+- 如后续验证稳定，再评估切回 `asar + asarUnpack`
+
+## 安全模型
+
+Electron 安全边界已固定：
+
+- `contextIsolation: true`
+- `nodeIntegration: false`
+- renderer 不直接访问 Node.js
+- renderer 不直接使用裸 IPC
+- 仅通过 `preload.js` 暴露白名单 API
+
+## 已知限制
+
+- BookToki / NewToki / ManaToki 域名和页面结构经常变化，站点改版后可能需要更新正则和选择器
+- Cloudflare / 验证页不保证永远自动通过；首版允许弹出受控辅助浏览器窗口
+- `tokiDownloader.js` userscript 仍保留，但桌面版是主入口
+- 当前 macOS 打包已验证可生成 `.app`，但默认仍使用 Electron 默认图标
+- 本轮真实烟测只完成了 BookToki；NewToki / ManaToki 仍需后续补跑
+
+## 后续扩展方向
+
+如果继续往“抓书姬”风格扩展，建议优先沿着下面几条走：
+
+- 增加任务历史和最近下载记录
+- 增加站点配置层，减少硬编码选择器散落
+- 增加章节进度条、失败重试、断点续跑
+- 增加多任务队列
+- 增加作品信息卡片和封面预览
