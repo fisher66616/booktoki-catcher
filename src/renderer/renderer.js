@@ -20,6 +20,7 @@ const STATUS_LABELS = {
 };
 
 let isRunning = false;
+const bridge = window.booktokiCatcher;
 
 function appendLog(message, level = "info") {
   const time = new Date().toLocaleTimeString("zh-CN", { hour12: false });
@@ -63,7 +64,7 @@ function setStatus(event) {
 }
 
 async function chooseOutputDirectory() {
-  const result = await window.booktokiCatcher.selectOutputDirectory();
+  const result = await bridge.selectOutputDirectory();
   if (!result.canceled && result.path) {
     outputInput.value = result.path;
   }
@@ -80,7 +81,7 @@ async function startDownload() {
   appendLog("准备启动下载任务。");
 
   try {
-    await window.booktokiCatcher.startDownload(payload);
+    await bridge.startDownload(payload);
   } catch (error) {
     appendLog(error.message || "启动任务失败。", "error");
     setStatus({
@@ -91,7 +92,7 @@ async function startDownload() {
 }
 
 async function cancelDownload() {
-  const result = await window.booktokiCatcher.cancelDownload();
+  const result = await bridge.cancelDownload();
   if (result.cancelled) {
     appendLog("已发送取消请求。", "warn");
   }
@@ -114,15 +115,15 @@ function registerEventListeners() {
     logOutput.textContent = "日志已清空。";
   });
 
-  window.booktokiCatcher.onLog((entry) => {
+  bridge.onLog((entry) => {
     appendLog(entry.message, entry.level);
   });
 
-  window.booktokiCatcher.onStatus((event) => {
+  bridge.onStatus((event) => {
     setStatus(event);
   });
 
-  window.booktokiCatcher.onTaskFinished((result) => {
+  bridge.onTaskFinished((result) => {
     if (result.ok) {
       appendLog(`任务结束。共完成 ${result.summary.completedChapters} 个章节。`);
       return;
@@ -138,16 +139,37 @@ function registerEventListeners() {
 }
 
 async function bootstrap() {
-  const outputDirectory = await window.booktokiCatcher.getDefaultOutputDirectory();
-  if (outputDirectory?.path) {
-    outputInput.value = outputDirectory.path;
+  if (!bridge) {
+    setStatus({
+      status: "failed",
+      message: "桌面桥接未加载，应用无法运行。",
+    });
+    appendLog("预加载桥接未成功注入，按钮和目录选择不可用。", "error");
+    startButton.disabled = true;
+    browseButton.disabled = true;
+    return;
   }
 
-  setStatus({
-    status: "idle",
-    message: "等待输入下载参数。",
-  });
-  registerEventListeners();
+  try {
+    const outputDirectory = await bridge.getDefaultOutputDirectory();
+    if (outputDirectory?.path) {
+      outputInput.value = outputDirectory.path;
+    }
+
+    setStatus({
+      status: "idle",
+      message: "等待输入下载参数。",
+    });
+    registerEventListeners();
+  } catch (error) {
+    setStatus({
+      status: "failed",
+      message: "初始化失败。",
+    });
+    appendLog(error.message || "初始化桌面应用时发生错误。", "error");
+    startButton.disabled = true;
+    browseButton.disabled = true;
+  }
 }
 
 void bootstrap();
