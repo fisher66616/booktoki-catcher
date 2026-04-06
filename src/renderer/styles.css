@@ -1,0 +1,308 @@
+:root {
+  color-scheme: light;
+  --page-bg: linear-gradient(180deg, #f6efe4 0%, #efe2cf 100%);
+  --panel-bg: rgba(255, 250, 243, 0.9);
+  --panel-border: rgba(112, 87, 57, 0.14);
+  --text-main: #302217;
+  --text-subtle: #76634f;
+  --accent: #91572d;
+  --accent-strong: #73411e;
+  --accent-soft: #f1d1a5;
+  --danger: #a23b2a;
+  --success: #2d6b3d;
+  --shadow: 0 18px 45px rgba(88, 61, 31, 0.14);
+  --radius-xl: 28px;
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --mono: "SFMono-Regular", "SF Mono", ui-monospace, monospace;
+  --sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--sans);
+  color: var(--text-main);
+  background: var(--page-bg);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.78), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(222, 165, 92, 0.18), transparent 28%);
+  pointer-events: none;
+}
+
+.app-shell {
+  position: relative;
+  z-index: 1;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 36px 32px 32px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.8fr 0.9fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.hero-copy,
+.status-card,
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+}
+
+.hero-copy {
+  border-radius: var(--radius-xl);
+  padding: 28px;
+}
+
+.brand-row {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.brand-mark {
+  width: 74px;
+  height: 74px;
+  flex: 0 0 auto;
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+h1,
+h2 {
+  margin: 0;
+}
+
+h1 {
+  font-size: 2rem;
+  line-height: 1.15;
+  max-width: 15ch;
+}
+
+.hero-text {
+  margin: 18px 0 0;
+  max-width: 64ch;
+  line-height: 1.7;
+  color: var(--text-subtle);
+}
+
+.status-card {
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+}
+
+.status-label {
+  font-size: 0.9rem;
+  color: var(--text-subtle);
+}
+
+#statusText {
+  font-size: 2rem;
+}
+
+#statusMessage {
+  margin: 0;
+  color: var(--text-subtle);
+  line-height: 1.6;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 20px;
+}
+
+.panel {
+  border-radius: var(--radius-xl);
+  padding: 24px;
+}
+
+.form-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.field,
+.field-row {
+  display: flex;
+  gap: 14px;
+}
+
+.field {
+  flex-direction: column;
+}
+
+.field-row .field {
+  flex: 1;
+}
+
+.field span {
+  font-size: 0.95rem;
+  color: var(--text-subtle);
+}
+
+input {
+  width: 100%;
+  border: 1px solid rgba(102, 75, 43, 0.14);
+  background: rgba(255, 255, 255, 0.82);
+  border-radius: var(--radius-md);
+  padding: 14px 15px;
+  font: inherit;
+  color: var(--text-main);
+  transition: border-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: rgba(145, 87, 45, 0.72);
+  box-shadow: 0 0 0 3px rgba(145, 87, 45, 0.12);
+}
+
+input[readonly] {
+  background: rgba(247, 240, 232, 0.95);
+}
+
+.directory-picker,
+.action-row,
+.panel-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.directory-picker input {
+  flex: 1;
+}
+
+.action-row {
+  margin-top: 8px;
+}
+
+button {
+  border: 0;
+  border-radius: 999px;
+  padding: 13px 18px;
+  font: inherit;
+  cursor: pointer;
+  transition: transform 140ms ease, opacity 140ms ease, background 140ms ease;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.primary-button {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
+  color: #fff8ef;
+}
+
+.secondary-button {
+  background: rgba(145, 87, 45, 0.1);
+  color: var(--accent-strong);
+}
+
+.ghost-button {
+  margin-left: auto;
+  background: transparent;
+  color: var(--text-subtle);
+  padding-inline: 0;
+}
+
+.log-panel {
+  min-height: 580px;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-header {
+  margin-bottom: 14px;
+}
+
+.log-output {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  background: #20150e;
+  color: #f8e9cf;
+  font-family: var(--mono);
+  font-size: 0.86rem;
+  line-height: 1.6;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+body[data-status="completed"] #statusText {
+  color: var(--success);
+}
+
+body[data-status="failed"] #statusText {
+  color: var(--danger);
+}
+
+body[data-status="partial"] #statusText {
+  color: var(--accent);
+}
+
+body[data-status="cancelled"] #statusText {
+  color: var(--text-subtle);
+}
+
+@media (max-width: 980px) {
+  .app-shell {
+    padding: 18px 16px 24px;
+  }
+
+  .hero,
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-row {
+    align-items: flex-start;
+  }
+
+  .field-row,
+  .directory-picker,
+  .action-row {
+    flex-direction: column;
+  }
+
+  .ghost-button {
+    margin-left: 0;
+  }
+}

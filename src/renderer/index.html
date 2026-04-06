@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booktoki Catcher</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <div class="brand-row">
+            <img class="brand-mark" src="../../assets/booktoki-catcher-mark.svg" alt="Booktoki Catcher" />
+            <div>
+              <p class="eyebrow">Booktoki Catcher</p>
+              <h1>把 BookToki 章节下载成你看得懂的本地文件</h1>
+            </div>
+          </div>
+          <p class="hero-text">
+            优先稳定，界面尽量简单。输入作品目录链接、选择保存位置，然后开始抓取。
+          </p>
+        </div>
+        <aside class="status-card">
+          <span class="status-label">当前状态</span>
+          <strong id="statusText">未开始</strong>
+          <p id="statusMessage">等待输入下载参数。</p>
+        </aside>
+      </header>
+
+      <main class="content-grid">
+        <section class="panel form-panel">
+          <h2>下载设置</h2>
+
+          <label class="field">
+            <span>作品链接</span>
+            <input id="urlInput" type="url" placeholder="https://booktoki123.com/novel/1234567" />
+          </label>
+
+          <div class="field-row">
+            <label class="field">
+              <span>开始章节</span>
+              <input id="startInput" type="number" min="0" placeholder="留空则从第一章开始" />
+            </label>
+            <label class="field">
+              <span>结束章节</span>
+              <input id="lastInput" type="number" min="0" placeholder="留空则下载到最后一章" />
+            </label>
+          </div>
+
+          <label class="field">
+            <span>保存目录</span>
+            <div class="directory-picker">
+              <input id="outputInput" type="text" readonly placeholder="请选择保存目录" />
+              <button id="browseButton" type="button" class="secondary-button">选择目录</button>
+            </div>
+          </label>
+
+          <div class="action-row">
+            <button id="startButton" type="button" class="primary-button">开始下载</button>
+            <button id="cancelButton" type="button" class="secondary-button" disabled>停止 / 取消</button>
+          </div>
+        </section>
+
+        <section class="panel log-panel">
+          <div class="panel-header">
+            <h2>运行日志</h2>
+            <button id="clearLogButton" type="button" class="ghost-button">清空日志</button>
+          </div>
+          <pre id="logOutput" class="log-output">准备就绪。</pre>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./renderer.js"></script>
+  </body>
+</html>
