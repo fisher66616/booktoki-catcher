@@ -3,17 +3,44 @@
   "productName": "Booktoki Catcher",
   "version": "0.1.0",
   "description": "BookToki / NewToki / ManaToki downloader with a macOS desktop app shell.",
+  "author": "fisher66616",
   "type": "module",
   "main": "electron/main.js",
   "scripts": {
     "cli": "node down.js",
     "dev": "electron .",
-    "start": "electron ."
+    "start": "electron .",
+    "build:mac": "electron-builder --mac dir"
   },
   "dependencies": {
     "puppeteer-real-browser": "^1.4.2"
   },
   "devDependencies": {
-    "electron": "^35.1.4"
+    "electron": "^35.1.4",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.fisher66616.booktokicatcher",
+    "productName": "Booktoki Catcher",
+    "asar": false,
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "assets/**/*",
+      "electron/**/*",
+      "src/**/*",
+      "down.js",
+      "tokiDownloader.js",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": [
+        {
+          "target": "dir"
+        }
+      ]
+    }
   }
 }
