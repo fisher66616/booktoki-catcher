@@ -180,7 +180,24 @@ Electron 安全边界已固定：
 - `nodeIntegration: false`
 - renderer 不直接访问 Node.js
 - renderer 不直接使用裸 IPC
-- 仅通过 `preload.js` 暴露白名单 API
+- 仅通过 `preload.cjs` 暴露白名单 API
+
+## 已验证 / 未验证
+
+已验证：
+
+- CLI BookToki：`https://booktoki469.com/novel/6981` 已完成 `1-1` 下载并成功输出文本章节
+- 桌面版开发环境可启动：`npm run dev` 已实际打开应用窗口
+- macOS 打包成功：`dist/mac-arm64/Booktoki Catcher.app` 已实际生成并可启动
+- 打包版 GUI BookToki：已完成 `1-1` 下载，状态栏显示“完成”，日志正常追加，成功输出 `.txt`
+- 打包版 GUI 取消：已完成运行中取消，状态栏显示“已取消”，日志会记录“收到取消请求 / 已发送取消请求 / 任务已取消”
+- CLI ManaToki：`https://manatoki468.net/comic/151107` 已完成 `1-1` 下载并成功输出 52 张图片
+
+未验证或待补测：
+
+- CLI NewToki：`https://newtoki469.com/webtoon/35285561` 在本轮测试中持续停留在站点可访问等待阶段，尚未完成真实下载
+- 打包版 GUI 的 NewToki / ManaToki 真实下载尚未补测
+- 默认应用图标仍为 Electron 默认图标
 
 ## 已知限制
 
@@ -188,7 +205,7 @@ Electron 安全边界已固定：
 - Cloudflare / 验证页不保证永远自动通过；首版允许弹出受控辅助浏览器窗口
 - `tokiDownloader.js` userscript 仍保留，但桌面版是主入口
 - 当前 macOS 打包已验证可生成 `.app`，但默认仍使用 Electron 默认图标
-- 本轮真实烟测只完成了 BookToki；NewToki / ManaToki 仍需后续补跑
+- NewToki 当前真实烟测仍可能被站点验证页卡住
 
 ## 后续扩展方向
 
