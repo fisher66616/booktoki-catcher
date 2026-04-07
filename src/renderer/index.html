@@ -60,6 +60,83 @@
             <button id="startButton" type="button" class="primary-button">开始下载</button>
             <button id="cancelButton" type="button" class="secondary-button" disabled>停止 / 取消</button>
           </div>
+
+          <div class="task-tools">
+            <button id="openReportButton" type="button" class="secondary-button" disabled>
+              打开任务报告
+            </button>
+            <p id="reportHint" class="inline-hint">任务开始后会在作品目录下生成 `_session/manifest.json` 和 `report.json`。</p>
+          </div>
+
+          <section class="resume-panel" aria-label="恢复任务">
+            <div class="stats-header">
+              <h2>恢复任务</h2>
+              <span class="stats-note">继续主线和补漏章节分开处理</span>
+            </div>
+            <label class="field">
+              <span>任务清单</span>
+              <div class="directory-picker">
+                <input id="manifestInput" type="text" readonly placeholder="请选择 _session/manifest.json" />
+                <button id="manifestBrowseButton" type="button" class="secondary-button">选择 manifest</button>
+              </div>
+            </label>
+            <p id="resumeHint" class="inline-hint">继续爬取将从 nextForward 开始，不会从头确认。</p>
+            <div class="stats-grid resume-grid">
+              <article class="stat-card stat-card-wide">
+                <span>小说名</span>
+                <strong id="overviewTitleStat">未选择</strong>
+              </article>
+              <article class="stat-card">
+                <span>latestSuccess</span>
+                <strong id="latestSuccessStat">无</strong>
+              </article>
+              <article class="stat-card">
+                <span>nextForward</span>
+                <strong id="nextForwardStat">无</strong>
+              </article>
+              <article class="stat-card">
+                <span>missingCount</span>
+                <strong id="overviewMissingStat">0</strong>
+              </article>
+              <article class="stat-card">
+                <span>runKind</span>
+                <strong id="runKindStat">未选择</strong>
+              </article>
+            </div>
+            <div class="action-row">
+              <button id="resumeTailButton" type="button" class="secondary-button" disabled>继续爬取</button>
+              <button id="resumeMissingButton" type="button" class="secondary-button" disabled>补漏章节</button>
+            </div>
+          </section>
+
+          <section class="stats-panel" aria-label="当前任务统计">
+            <div class="stats-header">
+              <h2>当前任务统计</h2>
+              <span class="stats-note">实时读取当前任务状态</span>
+            </div>
+            <div class="stats-grid">
+              <article class="stat-card">
+                <span>总章节</span>
+                <strong id="totalStat">0</strong>
+              </article>
+              <article class="stat-card">
+                <span>成功</span>
+                <strong id="successStat">0</strong>
+              </article>
+              <article class="stat-card">
+                <span>失败</span>
+                <strong id="failedStat">0</strong>
+              </article>
+              <article class="stat-card">
+                <span>缺失</span>
+                <strong id="missingStat">0</strong>
+              </article>
+              <article class="stat-card">
+                <span>当前状态</span>
+                <strong id="currentStatusStat">未开始</strong>
+              </article>
+            </div>
+          </section>
         </section>
 
         <section class="panel log-panel">

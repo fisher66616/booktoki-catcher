@@ -34,3 +34,10 @@ export class CancelledError extends DownloadError {
     this.name = "CancelledError";
   }
 }
+
+export class BlockedError extends DownloadError {
+  constructor(message = "检测到疑似验证页或封禁，已停止后续抓取", cause = null) {
+    super(message, "SUSPECTED_BLOCK", cause);
+    this.name = "BlockedError";
+  }
+}

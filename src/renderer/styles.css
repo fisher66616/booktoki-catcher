@@ -191,7 +191,9 @@ input[readonly] {
 
 .directory-picker,
 .action-row,
-.panel-header {
+.panel-header,
+.task-tools,
+.stats-header {
   display: flex;
   gap: 12px;
   align-items: center;
@@ -203,6 +205,71 @@ input[readonly] {
 
 .action-row {
   margin-top: 8px;
+}
+
+.task-tools {
+  align-items: flex-start;
+}
+
+.inline-hint,
+.stats-note {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text-subtle);
+}
+
+.stats-panel {
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.58);
+  border: 1px solid rgba(112, 87, 57, 0.1);
+}
+
+.resume-panel {
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.58);
+  border: 1px solid rgba(112, 87, 57, 0.1);
+}
+
+.stats-header {
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.resume-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin-top: 12px;
+}
+
+.stat-card {
+  padding: 14px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(112, 87, 57, 0.08);
+}
+
+.stat-card-wide {
+  grid-column: span 2;
+}
+
+.stat-card span {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--text-subtle);
+}
+
+.stat-card strong {
+  display: block;
+  margin-top: 10px;
+  font-size: 1.25rem;
 }
 
 button {
@@ -278,6 +345,10 @@ body[data-status="partial"] #statusText {
   color: var(--accent);
 }
 
+body[data-status="blocked"] #statusText {
+  color: var(--accent-strong);
+}
+
 body[data-status="cancelled"] #statusText {
   color: var(--text-subtle);
 }
@@ -298,11 +369,17 @@ body[data-status="cancelled"] #statusText {
 
   .field-row,
   .directory-picker,
-  .action-row {
+  .action-row,
+  .task-tools,
+  .stats-header {
     flex-direction: column;
   }
 
   .ghost-button {
     margin-left: 0;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
   }
 }

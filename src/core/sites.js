@@ -48,6 +48,10 @@ export function detectSite(url) {
   return SITE_DEFINITIONS.find((site) => site.urlPattern.test(url)) ?? null;
 }
 
+export function getSiteDefinitionByKey(key) {
+  return SITE_DEFINITIONS.find((site) => site.key === key) ?? null;
+}
+
 export function getProtocolDomain(site, url) {
   const matchedDomain = url.match(site.domainPattern);
 
