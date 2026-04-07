@@ -238,18 +238,36 @@ async function collectImageTargets(page, site) {
   });
 }
 
+async function buildAssetRequestHeaders(page, url) {
+  const [cookies, userAgent] = await Promise.all([
+    page.cookies(url),
+    page.evaluate(() => navigator.userAgent),
+  ]);
+
+  const headers = {
+    Accept: "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+    Referer: page.url(),
+    "User-Agent": userAgent,
+  };
+
+  if (cookies.length > 0) {
+    headers.Cookie = cookies.map((cookie) => `${cookie.name}=${cookie.value}`).join("; ");
+  }
+
+  return headers;
+}
+
 async function fetchBinaryFromPage(page, url) {
-  const binary = await page.evaluate(async (assetUrl) => {
-    const response = await fetch(assetUrl, { credentials: "include" });
-    if (!response.ok) {
-      throw new Error(`请求资源失败: HTTP ${response.status}`);
-    }
+  const response = await fetch(url, {
+    headers: await buildAssetRequestHeaders(page, url),
+  });
 
-    const buffer = await response.arrayBuffer();
-    return Array.from(new Uint8Array(buffer));
-  }, url);
+  if (!response.ok) {
+    throw new Error(`请求资源失败: HTTP ${response.status}`);
+  }
 
-  return Buffer.from(binary);
+  const buffer = await response.arrayBuffer();
+  return Buffer.from(buffer);
 }
 
 async function readComicChapter(page, chapter, summary, request, log) {
@@ -270,7 +288,7 @@ async function readComicChapter(page, chapter, summary, request, log) {
     throwIfAborted(request.signal);
 
     const image = imageTargets[index];
-    const imageUrl = `${request.protocolDomain}${image.src}`;
+    const imageUrl = new URL(image.src, request.protocolDomain).href;
     const fileName = `${chapterFolderName} image${String(index).padStart(4, "0")}${image.extension}`;
     const filePath = path.join(chapterDirectory, fileName);
 
@@ -409,6 +427,9 @@ export async function downloadSeries(rawOptions = {}) {
         summary.completedChapters += 1;
       } catch (error) {
         const normalizedError = normalizeError(error);
+        if (request.signal?.aborted) {
+          throw new CancelledError();
+        }
         if (normalizedError instanceof CancelledError) {
           throw normalizedError;
         }
